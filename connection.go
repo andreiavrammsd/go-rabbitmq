@@ -18,6 +18,10 @@ type Connection struct {
 	Connection *amqp.Connection
 }
 
+type Channel struct {
+	Channel *amqp.Channel
+}
+
 func NewConnection(config *Config) (*Connection, error) {
 	q := &Connection{
 		Config: config,
@@ -38,3 +42,13 @@ func NewConnection(config *Config) (*Connection, error) {
 
 	return q, err
 }
+
+func (q *Connection) GetChannel() (*Channel, error) {
+	ch, err := q.Connection.Channel()
+	c := &Channel{
+		Channel: ch,
+	}
+
+	return c, err
+}
+

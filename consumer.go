@@ -27,31 +27,3 @@ var ConsumerConfiguration = &ConsumerConfig{
 	NoWait: false,
 	Args : nil,
 }
-
-func (q *Queue) Consume(consumer Consumer) (error) {
-	config := ConsumerConfiguration
-	config.QueueName = q.Queue.Name
-
-	messages, err := q.Channel.Consume(
-		config.QueueName,
-		config.Consumer,
-		config.AutoAck,
-		config.Exclusive,
-		config.NoLocal,
-		config.NoWait,
-		config.Args,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	delivery := Delivery{
-		Messages: messages,
-		Queue: q.Queue,
-	}
-	consumer(delivery)
-
-	return nil
-}
-
