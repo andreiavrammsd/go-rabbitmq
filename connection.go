@@ -22,6 +22,8 @@ type Channel struct {
 	Channel *amqp.Channel
 }
 
+var dial = amqp.Dial
+
 func NewConnection(config *Config) (*Connection, error) {
 	q := &Connection{
 		Config: config,
@@ -36,7 +38,7 @@ func NewConnection(config *Config) (*Connection, error) {
 		Vhost: config.Vhost,
 	}
 
-	conn, err := amqp.Dial(uri.String())
+	conn, err := dial(uri.String())
 
 	q.Connection = conn
 
@@ -51,4 +53,3 @@ func (q *Connection) GetChannel() (*Channel, error) {
 
 	return c, err
 }
-
