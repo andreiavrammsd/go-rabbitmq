@@ -43,11 +43,11 @@ func NewConnection(config *Config) (*Connection, error) {
 	return q, err
 }
 
-func (q *Connection) GetChannel() (*Channel, error) {
-	ch, err := q.Connection.Channel()
-	c := &Channel{
-		Channel: ch,
+func (c *Connection) GetChannel() (*Channel, error) {
+	newChannel, err := c.Connection.Channel()
+	ch := &Channel{
+		Channel: newChannel,
 	}
 
-	return c, err
+	return ch, err
 }
