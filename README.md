@@ -26,9 +26,12 @@ var (
     conn *rabbitmq.Connection
     queueName string = "emails"
     config = &rabbitmq.Config{
-        Address: "127.0.0.1:5672",
+        Scheme: "amqp",
+        Host: "127.0.0.1",
+        Port: 5672,
         Username: "guest",
         Password: "guest",
+        Vhost: "/",
     }
     consumer rabbitmq.Consumer
     err error

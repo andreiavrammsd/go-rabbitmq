@@ -2,13 +2,15 @@ package rabbitmq
 
 import (
 	"github.com/streadway/amqp"
-	"fmt"
 )
 
 type Config struct {
-	Address  string
+	Scheme   string
+	Host     string
+	Port     int
 	Username string
 	Password string
+	Vhost    string
 }
 
 type Connection struct {
@@ -21,14 +23,18 @@ func NewConnection(config *Config) (*Connection, error) {
 		Config: config,
 	}
 
-	url := fmt.Sprintf("amqp://%s:%s@%s/", config.Username, config.Password, config.Address)
-	conn, err := dial(url)
+	uri := amqp.URI{
+		Scheme: config.Scheme,
+		Host: config.Host,
+		Port: config.Port,
+		Username: config.Username,
+		Password: config.Password,
+		Vhost: config.Vhost,
+	}
+
+	conn, err := amqp.Dial(uri.String())
 
 	q.Connection = conn
 
 	return q, err
-}
-
-func dial(url string) (*amqp.Connection, error) {
-	return amqp.Dial(url)
 }
