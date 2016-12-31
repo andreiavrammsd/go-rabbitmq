@@ -51,7 +51,7 @@ func main() {
     checkError(err)
 
     // We'll send a json string to queue
-    email := Email{
+    email := &Email{
         From: "myaddress@myprovider.tld",
         To: "youraddress@yourprovider.tld",
         Message: "Hello, GO!",
