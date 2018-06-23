@@ -2,7 +2,8 @@ package rabbitmq
 
 import "github.com/streadway/amqp"
 
-type MessageConfig struct {
+// messageConfig holds the parameters for a queue message
+type messageConfig struct {
 	Body         []byte
 	ContentType  string
 	DeliveryMode uint8
@@ -12,11 +13,12 @@ type MessageConfig struct {
 	Immediate    bool
 }
 
-var Message = &MessageConfig{
-	ContentType: "text/plain",
+// message is a basic message configuration
+var message = &messageConfig{
+	ContentType:  "text/plain",
 	DeliveryMode: amqp.Persistent,
-	Exchange: "",
-	RoutingKey: "",
-	Mandatory: false,
-	Immediate: false,
+	Exchange:     "",
+	RoutingKey:   "",
+	Mandatory:    false,
+	Immediate:    false,
 }

@@ -1,9 +1,8 @@
 package rabbitmq
 
-import (
-	"github.com/streadway/amqp"
-)
+import "github.com/streadway/amqp"
 
+// Config holds connection parameters
 type Config struct {
 	Scheme   string
 	Host     string
@@ -13,37 +12,41 @@ type Config struct {
 	Vhost    string
 }
 
+// Connection wrapper to RabbitMQ
 type Connection struct {
 	Config     *Config
 	Connection *amqp.Connection
 }
 
+// Channel wrapper
 type Channel struct {
 	Channel *amqp.Channel
 }
 
 var dial = amqp.Dial
 
-func NewConnection(config *Config) (*Connection, error) {
+// New creates a connection
+func New(config *Config) (*Connection, error) {
 	uri := amqp.URI{
-		Scheme: config.Scheme,
-		Host: config.Host,
-		Port: config.Port,
+		Scheme:   config.Scheme,
+		Host:     config.Host,
+		Port:     config.Port,
 		Username: config.Username,
 		Password: config.Password,
-		Vhost: config.Vhost,
+		Vhost:    config.Vhost,
 	}
 	conn, err := dial(uri.String())
 
 	q := &Connection{
-		Config: config,
+		Config:     config,
 		Connection: conn,
 	}
 
 	return q, err
 }
 
-func (c *Connection) GetChannel() (*Channel, error) {
+// Channel opens a new channel
+func (c *Connection) Channel() (*Channel, error) {
 	newChannel, err := c.Connection.Channel()
 	ch := &Channel{
 		Channel: newChannel,

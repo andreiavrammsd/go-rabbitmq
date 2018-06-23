@@ -1,7 +1,5 @@
 # Basic RabbitMQ Wrapper
 
-## This is just an exercise, not considered totally reliable
-
 ### Common usage of queues (publish, consume, acknowledge)
 
 #### Example

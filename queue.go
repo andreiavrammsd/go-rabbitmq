@@ -2,6 +2,7 @@ package rabbitmq
 
 import "github.com/streadway/amqp"
 
+// Queue holds the parameters for a channel queue
 type Queue struct {
 	Name       string
 	Channel    *amqp.Channel
@@ -13,15 +14,16 @@ type Queue struct {
 	Args       amqp.Table
 }
 
-func (ch *Channel) GetQueue(name string) (*Queue, error) {
+// Queue declares and returns a channel queue
+func (ch *Channel) Queue(name string) (*Queue, error) {
 	q := &Queue{
-		Name: name,
-		Channel: ch.Channel,
-		Durable: true,
+		Name:       name,
+		Channel:    ch.Channel,
+		Durable:    true,
 		AutoDelete: false,
-		Exclusive: false,
-		NoWait: false,
-		Args : nil,
+		Exclusive:  false,
+		NoWait:     false,
+		Args:       nil,
 	}
 	queue, err := ch.Channel.QueueDeclare(
 		q.Name,
@@ -36,28 +38,27 @@ func (ch *Channel) GetQueue(name string) (*Queue, error) {
 	return q, err
 }
 
+// Publish a message to queue
 func (q *Queue) Publish(body []byte) error {
 	err := q.Channel.Publish(
-		Message.Exchange,
+		message.Exchange,
 		q.Queue.Name,
-		Message.Mandatory,
-		Message.Immediate,
+		message.Mandatory,
+		message.Immediate,
 		amqp.Publishing{
-			DeliveryMode: Message.DeliveryMode,
-			ContentType: Message.ContentType,
-			Body: body,
+			DeliveryMode: message.DeliveryMode,
+			ContentType:  message.ContentType,
+			Body:         body,
 		},
 	)
 
 	return err
 }
 
-func (q *Queue) Consume(consumer Consumer) (error) {
-	config := ConsumerConfiguration
-	config.QueueName = q.Queue.Name
-
+// Consume messages from queue
+func (q *Queue) Consume(config *ConsumerConfig) error {
 	messages, err := q.Channel.Consume(
-		config.QueueName,
+		q.Queue.Name,
 		config.Consumer,
 		config.AutoAck,
 		config.Exclusive,
@@ -70,11 +71,9 @@ func (q *Queue) Consume(consumer Consumer) (error) {
 		return err
 	}
 
-	delivery := Delivery{
-		Messages: messages,
-		Queue: q.Queue,
+	for m := range messages {
+		config.Callback(&Delivery{m})
 	}
-	consumer(delivery)
 
 	return nil
 }
